@@ -1248,88 +1248,111 @@ systemctl restart httpd
 
 ![alt text](images/15.192.png)
 
-# The next step is to create the autoscaling group for the bastion
-    - click on Auto Scaling group > create Autoscaling group
+### The next step is to create the autoscaling group for the bastion
+- click on Auto Scaling group > create Autoscaling group
+
 ![alt text](images/15.193.png)
 
-    - Name : ACS-bastion
-    - select lauch template: ACS-bastion-template > next
- ![alt text](images/15.194.png)
+- Name : ACS-bastion
+- select lauch template: ACS-bastion-template > next
 
-    - Network
-        - select VPC
-        - subnet: it has to in the 2 public subnets (1&2)
-        - > Next
-  ![alt text](images/15.195.png)      
+![alt text](images/15.194.png)
 
-    - No load balancer (our bastion does not have a load balancer)
-    - No VPC Lattice service
-  ![alt text](images/15.196.png)  
+- Network
+- select VPC
+- subnet: it has to in the 2 public subnets (1&2)
+- > Next
 
-    - Health check : ELB
-   ![alt text](images/15.197.png) 
+![alt text](images/15.195.png)      
 
-    - Group size capacity : leave to 1
- ![alt text](images/15.198.png)
+- No load balancer (our bastion does not have a load balancer)
+- No VPC Lattice service
 
-    -Scaling policies
-        - select target tracking scaling policy
-        - target Value : 90 (in the documentation)
-        - > Next
-  ![alt text](images/15.199.png)      
+![alt text](images/15.196.png)  
 
-    - Add notification
-  ![alt text](images/15.200.png)  
+- Health check : ELB
 
-        - create a topic : ACS-notification
-        - put your email
-        -> next 
-   ![alt text](images/15.201.png)     
-   ![alt text](images/15.202.png)
+![alt text](images/15.197.png) 
 
-    - Add tag: Name: ACS-bastion > Next > create Auto Scaling group
+- Group size capacity : leave to 1
+
+![alt text](images/15.198.png)
+
+**Scaling policies**
+- select target tracking scaling policy
+- target Value : 90 (in the documentation)
+- > Next
+
+![alt text](images/15.199.png)      
+
+- Add notification
+
+![alt text](images/15.200.png)  
+
+- create a topic : ACS-notification
+- put your email
+-> next 
+
+![alt text](images/15.201.png)     
+
+![alt text](images/15.202.png)
+
+- Add tag: Name: ACS-bastion > Next > create Auto Scaling group
+
 ![alt text](images/15.203.png)
 
 
-# The next step is to create the Auto Scaling group for the nginx
-     - Name : ACS-nginx
-    - select lauch template: ACS-nginx-template > next
- ![alt text](images/15.204.png)
+### The next step is to create the Auto Scaling group for the nginx
+     
+- Name : ACS-nginx
+- select lauch template: ACS-nginx-template > next
 
-    - Network
-        - select VPC
-        - subnet: it has to in the 2 public subnets (1&2)
-        - > Next
- ![alt text](images/15.205.png)
+![alt text](images/15.204.png)
 
-    - Attach to an existing load balancer
-    - choose from your load balance target group: ACS-nginx-target
+**Network**
+- select VPC
+- subnet: it has to in the 2 public subnets (1&2)
+- > Next
+
+![alt text](images/15.205.png)
+
+- Attach to an existing load balancer
+- choose from your load balance target group: ACS-nginx-target
+
 ![alt text](images/15.206.png)
 
-    - No VPC Lattice service
-   ![alt text](images/15.207.png) 
+- No VPC Lattice service
 
-    - Health check : Turn on ELB
-  ![alt text](images/15.208.png)
+![alt text](images/15.207.png) 
 
-    - Group size capacity : leave to 1
- ![alt text](images/15.209.png)
+- Health check : Turn on ELB
+  
+![alt text](images/15.208.png)
 
-    -Scaling policies
-        - select target tracking scaling policy
-        - target Value : 90 (in the documentation)
-        - > Next
-   ![alt text](images/15.210.png)   
+- Group size capacity : leave to 1
 
-    - Add notification
-        - ACS-notification
-        -> next 
-   ![alt text](images/15.211.png)
+![alt text](images/15.209.png)
 
-    - Add tag: Name: ACS-bastion > Next > create Auto Scaling group
-    ![alt text](images/15.212.png)
+- Scaling policies
+    - select target tracking scaling policy
+    - target Value : 90 (in the documentation)
+    - > Next
 
-# we can delete the instance we used to create the AMI (webserve, bastion and nginx) as we dont need them again
+![alt text](images/15.210.png)   
+
+- Add notification
+    - ACS-notification
+    -> next 
+
+![alt text](images/15.211.png)
+
+- Add tag: Name: ACS-bastion > Next > create Auto Scaling group
+
+![alt text](images/15.212.png)
+
+> [!TIPS] 
+> we can delete the instance we used to create the AMI (webserve, bastion and nginx) as we dont need them again
+
 ![alt text](images/15.213.png)
 
 # The next step is to create the wordpressdb and toolingdb
