@@ -1355,156 +1355,197 @@ systemctl restart httpd
 
 ![alt text](images/15.213.png)
 
-# The next step is to create the wordpressdb and toolingdb
-# we are going to use the concept of ssh agent to achieve this 
-    
-    - go to EC2 dashboard > select ACS-bastion > copy the public IPv4 addresses
-    ![alt text](images/15.214.png)
+### The next step is to create the wordpressdb and toolingdb
 
-    - go to the terminal, add your public key with these commands
-        ssh-add <your key>.pem
-        ssh-add -l
+we are going to use the concept of ssh agent to achieve this 
+    
+- go to EC2 dashboard > select ACS-bastion > copy the public IPv4 addresses
+
+![alt text](images/15.214.png)
+
+- go to the terminal, add your public key with these commands
+```
+ssh-add <your key>.pem
+```
+```
+ssh-add -l
+```
+
 ![alt text](images/15.215.png)
 
-    - ssh into your bastion with this command
-       **** ssh -A ec2-user@<ACS-bastion-public-IPv4-address>   not yet
-       - connect normally with public ip
-    
-    ## if the connection timed out, check the security group and change from my IP to anywhere
+**ssh into your bastion with this command**
+```
+ssh -i <your key.pem> ec2-user@<public-ip-address> 
+```    
+> [!NOTE]
+> if the connection timed out, check the security group and change from my IP to anywhere
 
-    -Let's get into the mysql, we used the RDS endponit as the host
-        - Go to RDS > Databases > acs-database >connectivity & Security
-        - copy the endpoint
- ![alt text](images/15.216.png)
-        - mysql -h acs-database.cxgqmm0me4bb.us-east-1.rds.amazonaws.com -u ACSadmin -p
-            - the password is admin12345
-            - create database wordpressdb;
-            - create database toolingdb;
-            - show databases;
-    ![alt text](images/15.217.png)    
-            - exit from the RDS and back to our bastion
+Let's get into the mysql, we used the RDS endponit as the host
+- Go to RDS > Databases > acs-database >connectivity & Security
+- copy the endpoint
 
-# The next thing is to create our autoscaling group
+![alt text](images/15.216.png)
+
+```
+mysql -h acs-database.cxgqmm0me4bb.us-east-1.rds.amazonaws.com -u ACSadmin -p
+```
+- the password is admin12345
+- create database wordpressdb;
+- create database toolingdb;
+- show databases;
+
+![alt text](images/15.217.png)    
+  
+- exit from the RDS and back to our bastion
+
+### The next thing is to create our autoscaling group
 - first let's check our target group to check if it's healthy
 - go to target group > ACS-nginx-target
+
 ![alt text](images/15.218.png)
 
-- let's creat autoscaling group for wordpress
-    - Name : ACS-wordpress
-    - select lauch template: ACS-wordpress-template > next
-    ![alt text](images/15.219.png)
-    ![alt text](images/15.220.png)
+Let's creat autoscaling group for wordpress
+- Name : ACS-wordpress
+- select lauch template: ACS-wordpress-template > next
 
-    - Network
-        - select VPC
-        - subnet: it has to be in the 2 private subnets (1&2)
-        - > Next
- ![alt text](images/15.221.png)
+![alt text](images/15.219.png)
 
-    - Attach to an existing load balancer
-    - choose from your load balance target group: ACS-wordpress-target
+![alt text](images/15.220.png)
+
+**Network**
+- select VPC
+- subnet: it has to be in the 2 private subnets (1&2)
+- > Next
+
+![alt text](images/15.221.png)
+
+- Attach to an existing load balancer
+- choose from your load balance target group: ACS-wordpress-target
+
 ![alt text](images/15.222.png)
 
-    - No VPC Lattice service
-    - Health check : Turn on ELB
-   ![alt text](images/15.224.png)
+- No VPC Lattice service
+- Health check : Turn on ELB
 
-    - Group size capacity : leave to 1
- ![alt text](images/15.225.png)
+![alt text](images/15.224.png)
 
-    -Scaling policies
-        - select target tracking scaling policy
-        - target Value : 90 (in the documentation)
-        - > Next
-   ![alt text](images/15.226.png)   
+- Group size capacity : leave to 1
 
-    - Add notification
-        - ACS-notification
-        -> next 
-   ![alt text](images/15.227.png)
+![alt text](images/15.225.png)
 
-    - Add tag: Name: ACS-wordpress > Next > create Auto Scaling group
-    ![alt text](images/15.228.png)
+Scaling policies
+- select target tracking scaling policy
+- target Value : 90 (in the documentation)
+- > Next
+ 
+![alt text](images/15.226.png)   
+
+Add notification
+- ACS-notification
+-> next 
+
+![alt text](images/15.227.png)
+
+- Add tag: Name: ACS-wordpress > Next > create Auto Scaling group
+
+![alt text](images/15.228.png)
 
 
-# let's creat autoscaling group for tooling
-     - Name : ACS-tooling
-    - select lauch template: ACS-tooling-template > next
- ![alt text](images/15.229.png)
+### let's creat autoscaling group for tooling
 
-    - Network
-        - select VPC
-        - subnet: it has to be in the 2 private subnets (1&2)
-        - > Next
- ![alt text](images/15.300.png)
+- Name : ACS-tooling
+- select lauch template: ACS-tooling-template > next
 
-    - Attach to an existing load balancer
-    - choose from your load balance target group: ACS-tooling-target
-     - No VPC Lattice service
+![alt text](images/15.229.png)
+
+**Network**
+- select VPC
+- subnet: it has to be in the 2 private subnets (1&2)
+- > Next
+
+![alt text](images/15.300.png)
+
+- Attach to an existing load balancer
+- choose from your load balance target group: ACS-tooling-target
+- No VPC Lattice service
+
 ![alt text](images/15.301.png)
+
 ![alt text](images/15.302.png)
 
-    - Health check : Turn on ELB
-  ![alt text](images/15.303.png)
+- Health check : Turn on ELB
 
-    - Group size capacity : leave to 1
- ![alt text](images/15.304.png)
+![alt text](images/15.303.png)
 
-    -Scaling policies
-        - select target tracking scaling policy
-        - target Value : 90 (in the documentation)
-        - > Next
-    ![alt text](images/15.305.png)  
+- Group size capacity : leave to 1
 
-    - Add notification
-        - ACS-notification
-        -> next 
-  ![alt text](images/15.306.png) 
+![alt text](images/15.304.png)
 
-    - Add tag: Name: ACS-tooling > Next > create Auto Scaling group
-    ![alt text](images/15.307.png)
+Scaling policies
+- select target tracking scaling policy
+- target Value : 90 (in the documentation)
+- > Next
 
-# All autoscaling group
+![alt text](images/15.305.png)  
+
+Add notification
+- ACS-notification
+-> next 
+
+![alt text](images/15.306.png) 
+
+- Add tag: Name: ACS-tooling > Next > create Auto Scaling group
+
+![alt text](images/15.307.png)
+
+### All autoscaling group
+
 ![alt text](images/15.314.png)
 
-# Let's create record in our Route53
-# We are creating for tooling and wordpress
-    - creating for Tooling first
-    - go to Route53 > Hosted zone >olami.uk > create Record
- ![alt text](images/15.308.png)
+### Let's create record in our Route53
 
-    - Record name: tooling
-    - Alias: toggle on
-    -Route traffic : Alias to Application and classic load balancer; 
-        - Region: US EAst Virgina
-        - select ACS-ext-ALB (external load balancer)
+We are creating for tooling and wordpress
+- creating for Tooling first
+- go to Route53 > Hosted zone >olami.uk > create Record
+
+![alt text](images/15.308.png)
+
+- Record name: tooling
+- Alias: toggle on
+- Route traffic : Alias to Application and classic load balancer; 
+- Region: US EAst Virgina
+- select ACS-ext-ALB (external load balancer)
+
 ![alt text](images/15.309.png)
 
-    - Add another record
-        - Record name: www.tooling
-         - Alias: toggle on
-        -Route traffic : Alias to Application and classic load balancer; 
-            - Region: US EAst Virgina
-            - select ACS-ext-ALB (external load balancer)
-            - create
+Add another record
+- Record name: www.tooling
+- Alias: toggle on
+- Route traffic : Alias to Application and classic load balancer; 
+- Region: US EAst Virgina
+- select ACS-ext-ALB (external load balancer)
+- create
+
 ![alt text](images/15.311.png)
 
-     - let's create record for wordpress
-        - Record name: wordpress
-        - Alias: toggle on
-        -Route traffic : Alias to Application and classic load balancer; 
-            - Region: US EAst Virgina
-            - select ACS-ext-ALB (external load balancer)
-    ![alt text](images/15.312.png)
+Let's create record for wordpress
+- Record name: wordpress
+- Alias: toggle on
+- Route traffic : Alias to Application and classic load balancer; 
+- Region: US EAst Virgina
+- select ACS-ext-ALB (external load balancer)
 
-    - Add another record
-        - Record name: www.wordpress
-         - Alias: toggle on
-        -Route traffic : Alias to Application and classic load balancer; 
-            - Region: US EAst Virgina
-            - select ACS-ext-ALB (external load balancer)
-            - create
-    ![alt text](images/15.313.png)
+![alt text](images/15.312.png)
+
+Add another record
+- Record name: www.wordpress
+- Alias: toggle on
+- Route traffic : Alias to Application and classic load balancer; 
+- Region: US EAst Virgina
+- select ACS-ext-ALB (external load balancer)
+- create
+
+![alt text](images/15.313.png)
 
 
 # create databases for both tooling and wordpress i.e toolingdb and wordpressdb
