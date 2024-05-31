@@ -1,75 +1,25 @@
-# 15.AWS-CLOUD-SOLUTION-FOR-2-COMPANY-WEBSITES-USING-A-REVERSE-PROXY-TECHNOLOGY
 
-We will build a secure infrastructure inside AWS VPC (Virtual Private Cloud) network for **ACS** Company that uses WordPress CMS for its main business website, and a [Tooling](https://github.com/Olaminiyi/tooling) website for the DevOps team.
-
-As part of the company’s desire for improved security and performance, a decision has been made to use a reverse proxy technology from **NGINX** to achieve this.
-
-**PURPOSE:**
-
-Reduced Cost, increase Security and Scalability are the major requirements for this project. Hence, implementing the architecture designed below, ensure that infrastructure for both websites (WordPress and Tooling) are resilient to Web Server failures, can accomodate increased traffic and at the same time, has reasonable cost.
-
-**AWS resources Required for the Design:**
-
-- North Virginia Region (us-east-1)
-- Availibility zones (3 subnets in us-east-1a) and (3 subnets in us-east-1b)
-- VPC Network Range - 10.0.0.0/16
-- subnets - 10.0.1.0/24, 10.0.2.0/24, 10.0.3.0/24, 10.0.4.0/24, 10.0.5.0/24 and 10.0.6.0/24
-- 6 subnets (4 private subnets and 2 public subnets)
-- internet gateway
-- 2 nginx for reverse proxy
-- 2 bastion hosts/jump servers
-- 2 application Load balancers(ALB)
-- Auto scaling Groups to manage the scaling of the Ec2 instances
-- 2 NAT gateways for the resources in the private subnet to communicate with the internet gateway.
-
-> [!NOTE]
-> The NAT gateway only allows traffic to the internet and does not allow from the internet.
-
-- Route DNS
-- RDS for the database
-- Amazon Elastic Files System for the file management
-
-**AWS MULTIPLE WEBSITE PROJECT**
-
-![alt text](<images/new pic.png>)
-
-
-
-Firstly fork https://github.com/Olaminiyi/ACS-project-config.git into your repo
-
-### SET UP A VIRTUAL PRIVATE NETWORK (VPC)
-
-Go to AWS console
-We are creating 2 `route tables`, the First will talk to the public subnet via `internet gateway` WHILE the SECOND will talk to `private subnet` via the `Natgateway`
-
-Create a new VPC
-Name it ACS-VPC
-From the soluton diagram: IPv6 CIDR block : 10.0.0.0/16
-
+# fork https://github.com/Olaminiyi/ACS-project-config.git into your repo
+# Go to AWS console
+# we are creating 2 route tables, the First will talk to the public subnet via internet gateway WHILE the SECOND will talk to private subnet via the Natgateway
+# create a new VPC
+    - name it ACS-VPC
+    - from the soluton diagram: IPv6 CIDR block : 10.0.0.0/16
+    - create VPC
 ![alt text](images/15.1.png)
-
 ![alt text](images/15.2.png)
-
-We need to enable the DNS hostname, the DNS resolution is enabled already
-From actions > edit VPC settings
- 
-![alt text](images/15.3.png)
-
-Check enable and save changes
-       
-![alt text](images/15.4.png)
+    - we need to enable the DNS hostname, the DNS resolution is enabled already
+        - from actions > edit VPC settings
+       ![alt text](images/15.3.png)
+        - check enable and save changes
+        ![alt text](images/15.4.png)
 
     
-
-### Create internet gateway and attach to VPC
-
-Click on the Internet gateway
-
+# The next ting to do is to create the internet gateway and attach it to the VPC
+        - click on the Internet gateway
 ![alt text](images/15.5.png)
-     
-Create, name it ACS-Igw
- 
-![alt text](images/15.6.png)
+        - create, name it ACS-Igw
+        ![alt text](images/15.6.png)
         - click on Action > attach to VPC
         ![alt text](images/15.7.png)
         - select our own VPC > Attach internet gateway
