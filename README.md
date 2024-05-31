@@ -138,48 +138,59 @@ All created subnets
  
 ![alt text](images/15.19.png)
 
-# Next is to create the route Table
-- were creating 2 route table
-    - click on the route table link
-    - the first one: ACS-public-rtb
-    - select the VPC > create
-    ![alt text](images/15.16.png)
+### Next is to create the Route Table
 
-    - the second one: ACS-private-rtb
-    - select the VPC > create
-    ![alt text](images/15.17.png)
-    ![alt text](images/15.18.png)
+We are creating 2 route table
+Click on the route table link
+The first one: ACS-public-rtb
+Select the VPC > create
+ 
+![alt text](images/15.16.png)
 
-# the next is to associate the public subnet to the public route tabe and vice-versa
-    - click on the ACS-public-rtb
-    - click on subnet asscoiation > edit subnet associations
-  ![alt text](images/15.20.png)
+The second one: ACS-private-rtb
+Select the VPC > create
+ 
+![alt text](images/15.17.png)
+![alt text](images/15.18.png)
 
-    - select public subnet1 & 2
-    - click on save association
- ![alt text](images/15.21.png)
+### Next is to associate the public subnet to the public route tabe and vice-versa
 
-    - do the same for ACS-private-rtb
- ![alt text](images/15.22.png)
+Click on the ACS-public-rtb
+Click on subnet asscoiation > edit subnet associations
+ 
+![alt text](images/15.20.png)
 
-# the next is to edit the route of the route table
-- we want the the Route table to have access to the subnets
-    - click on Route table > Public Route > 
-    - Action > Edit Route 
-    ![alt text](images/15.23.png)
+Select public subnet1 & 2
+Click on save association
 
-    - click on Add route
-    - let it have access to the internet by open it to 0.0.0/0
-    - select INTERNET GATEWAY > select the created internet gateway > save changes
-    ![alt text](images/15.24.png)
+![alt text](images/15.21.png)
 
-    # this implies that every subnet associated to this Route Table is going to talk to the internet via this internet gateway
-    # Internet gateway is a 2 way communication; the internet can talk to the subnet and the subnet can talk to the internet
-    # UNLIKE the NATGATEWAY, the subnet can talk internet but the internet can not talk to the subnet
+Do the same for ACS-private-rtb
 
-    # The next step is to create the Natgateway to be attached to the Private subnets but we need to create ELASTIC IP to be attached to the Natgateway first
-        - click on elastic IP > allocate Elastic IP
-       ![alt text](images/15.25.png)
+![alt text](images/15.22.png)
+
+### Next is to edit the route of the route table
+
+We want the the Route table to have access to the subnets
+Click on Route table > Public Route > 
+Action > Edit Route 
+
+![alt text](images/15.23.png)
+
+Click on Add route
+Let it have access to the internet by open it to 0.0.0/0
+Select INTERNET GATEWAY > select the created internet gateway > save changes
+
+![alt text](images/15.24.png)
+
+This implies that every subnet associated to this Route Table is going to talk to the internet via this internet gateway
+Internet gateway is a 2 way communication; the internet can talk to the subnet and the subnet can talk to the internet
+UNLIKE the NATGATEWAY, the subnet can talk internet but the internet can not talk to the subnet
+
+The next step is to create the Natgateway to be attached to the Private subnets but we need to create ELASTIC IP to be attached to the Natgateway first
+Click on elastic IP > allocate Elastic IP
+ 
+![alt text](images/15.25.png)
     
         - Name it ACS-NAT > Allocate
      ![alt text](images/15.26.png)
