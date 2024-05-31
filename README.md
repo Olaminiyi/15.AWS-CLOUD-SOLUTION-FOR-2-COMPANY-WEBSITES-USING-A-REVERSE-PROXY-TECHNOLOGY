@@ -242,59 +242,72 @@ Select the ACS-VPC
  
 ![alt text](images/15.34.png)
 
-EDIT THE INBOUND RULES
-            - for the external ALB, we want it to be accessible on the internet from anywhere
-            - give it both HTTPS and HTTP from anywhere 0.0.0.0/0
-            ![alt text](images/15.35.png)
-        - FOR OUTBOUND RULES
-            - allow all trafic from 0.0.0.0/0
-            - for tags you can put ACS-ext-ALB 
-            - create security group
-       ![alt text](images/15.36.png)
+### EDIT THE INBOUND RULES
+
+For the external ALB, we want it to be accessible on the internet from anywhere
+give it both HTTPS and HTTP from anywhere 0.0.0.0/0
+
+![alt text](images/15.35.png)
+
+FOR OUTBOUND RULES
+Allow all trafic from 0.0.0.0/0
+for tags you can put ACS-ext-ALB 
+Create security group
+  
+![alt text](images/15.36.png)
         
-        - The next security group is the bastion security group
-            - click security group
-             - named it ACS-bastion > Descrip(for bastion)
-             - select the ACS-VPC
-    ![alt text](images/15.37.png)
+The next security group is the bastion security group
+click security group
+Named it ACS-bastion > Descrip(for bastion)
+select the ACS-VPC
 
-             - EDIT THE INBOUND RULES
-                - we need ssh for our bastion, and only from our computer IP
-                - open ssh from (sorce = My IP)
-                - add description
-                - that's all we need for bastion > create Security group
-     ![alt text](images/15.38.png)
+![alt text](images/15.37.png)
 
-        - The next security group is for the reverse proxy servers (NGINX servers)
-            - create security group
-            - named (ACS-nginx-reverse-proxy) > select VPC
-     ![alt text](images/15.41.png)
-            ![alt text](images/15.39.png)
+EDIT THE INBOUND RULES
+we need ssh for our bastion, and only from our computer IP
+open ssh from (sorce = My IP)
+add description
+that's all we need for bastion > create Security group
 
-    # from the diagram, for the reverse proxy (nginx) is placed directly under the ALB. the source of traffic should only come from the ALB (not from the internet nor our IP)
-            - EDIT INBOUND RULES
-                - HTTP from the ALB security group
-                - HTTPS from the ALB security group
-            # we need our bastion to have access to our reverse proxy server in case of any issue, we should be able to ssh into our reverse proxy server from our bastion
-                - SSH from the bastion security group 
-      ![alt text](images/15.40.png)
-                ![alt text](images/15.42.png)
+![alt text](images/15.38.png)
 
-                -OUTBOUND RULES is ok for all traffic from 0.0.0.0/0
-                - create group
+### The next security group is for the reverse proxy servers (NGINX servers)
+Create security group
+named (ACS-nginx-reverse-proxy) > select VPC
 
-        - The next security group is for the internal load balancer
-            - Under Security > Security group > create security group
-             - named it ACS-int-ALB > Descrip(for int ALB)
-             - select the ACS-VPC
-     ![alt text](images/15.43.png)
+![alt text](images/15.41.png)
+ 
+![alt text](images/15.39.png)
 
-             - EDIT THE INBOUND RULES 
-             - NOTE from the diagram, the traffic is coming only from the Nginx server
-             - Both HTTPS and HTTP from nginx security group
-             - nothing for the outbound rules 
-             - create security
-     ![alt text](images/15.44.png)
+from the diagram, for the reverse proxy (nginx) is placed directly under the ALB. the source of traffic should only come from the ALB (not from the internet nor our IP)
+
+EDIT INBOUND RULES
+HTTP from the ALB security group
+HTTPS from the ALB security group
+we need our bastion to have access to our reverse proxy server in case of any issue, we should be able to ssh into our reverse proxy server from our bastion
+SSH from the bastion security group 
+
+![alt text](images/15.40.png)
+
+![alt text](images/15.42.png)
+
+OUTBOUND RULES is ok for all traffic from 0.0.0.0/0
+Create group
+
+The next security group is for the internal load balancer
+Under Security > Security group > create security group
+Named it ACS-int-ALB > Descrip(for int ALB)
+Select the ACS-VPC
+ 
+![alt text](images/15.43.png)
+
+EDIT THE INBOUND RULES 
+NOTE from the diagram, the traffic is coming only from the Nginx server
+Both HTTPS and HTTP from nginx security group
+nothing for the outbound rules 
+create security
+
+![alt text](images/15.44.png)
         
         - The next security group we are creating now is for the webservers
             - the source of its traffic is coming only from the internal ALB
