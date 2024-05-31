@@ -565,54 +565,75 @@ public access : NO
        
 ![alt text](images/15.91.png)
 
-        - VPC Security group: choose existing (ACS-datalayer)
-        - AZ : you can choose between 1a or 1b
-        - Database Authentication : Password authentication
-        - initial database name: test
-        - leave other settings as default > create
-        ![alt text](images/15.92.png)
-        ![alt text](images/15.93.png)
+VPC Security group: choose existing (ACS-datalayer)
+`AZ` : you can choose between `1a` or `1b`
+Database Authentication : Password authentication
+initial database name: test
+leave other settings as default > create
 
-    # To create an autoscaling group we are going to need an AMI, launch template and a target group
-    # A target group must be attached to a load balancer
-    # we create a target group first, then a lauch template, after the we create the load balancer
-    # After that we can create our autoscaling group such that it we make use of the lauch templated and load balancer we've created to spin up our instances
-    # 2 things inside lauch template are the AMI and the user data
+![alt text](images/15.92.png)
 
-    # The first thing is to create an AMI first
-    # we creating 3 AMI's for (bastion, Nginx and webservers)
-        - spin up 3 RedHat EC2 instances for (bastion, Nginx and webservers)
-     ![alt text](images/15.93.png)
+![alt text](images/15.93.png)
 
-    # The first installation is for the Bastion AMI
-        - connect to the bastion server via ssh
-        - change to super user : su -
+To create an autoscaling group we are going to need an AMI, launch template and a target group
+A target group must be attached to a load balancer
+we create a target group first, then a lauch template, after the we create the load balancer
+After that we can create our autoscaling group such that it we make use of the lauch templated and load balancer we've created to spin up our instances
 
-        - using the installation.md file for installation
-            - install the epel & remi repository
-            yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm 
-            yum install -y dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm 
+### Create Launch template
 
-      ![alt text](images/15.95.png)
-            ![alt text](images/15.96.png)
+2 things inside lauch template are the AMI and the user data
+
+### The first thing is to create an AMI first
+
+we creating 3 AMI's for (bastion, Nginx and webservers)
+spin up 3 RedHat EC2 instances for (bastion, Nginx and webservers)
+
+![alt text](images/15.93.png)
+
+The first installation is for the Bastion AMI
+connect to the `bastion server` via `ssh`
+change to super user 
+```
+su -
+```
+
+Using the installation.md file for installation
+install the epel & remi repository
+```
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm 
+yum install -y dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm 
+```
+![alt text](images/15.95.png)
+ 
+![alt text](images/15.96.png)
         
-    - install wget vim python3 telnet htop git mysql net-tools chrony -y 
-            yum install wget vim python3 telnet htop git mysql net-tools chrony -y 
-            ![alt text](images/15.99.png)
+```
+install wget vim python3 telnet htop git mysql net-tools chrony -y 
+```
+```     
+yum install wget vim python3 telnet htop git mysql net-tools chrony -y 
+```
+         
+![alt text](images/15.99.png)
+```
+systemctl start chronyd 
+systemctl enable chronyd
+```   
+      
+![alt text](images/15.100.png)
 
-        systemctl start chronyd 
-        systemctl enable chronyd
-         ![alt text](images/15.100.png)
+### The next installation is for the Nginx AMI
+We will be configuring `sellinux policiies` for our `nginx`
+We will also install `self-signed certificate` for our nginx because:
+To configure our target group, we must ensure that the `protocol` `HTTS` on `secure TLS port 443` i.e 
+The load balancer will be sending traffic to both **(nginx and webserver on port 443)**
+We must set the port that the `nginx` is listening to on `port 443`
+For this configuration to be secured we must configured a `self-signed certificate` on (both nginx and webserver instances)
 
-# The next installation is for the Nginx AMI
-#  we will be configuring sellinux policiies for our nginx
-# we will also install sel-signed certificate for our nginx because:
-    - To configure our target group, we must ensure that the protocol HTTS on secure TLS port 443 i.e 
-    - the load balancer will be sending traffic to both (nginx and webserver on port 443)
-    - we must set the port that the nginx is listening to on port 443
-    - for this configuration to be secured we must configured a self-signed certificate on (both nginx and webserver instances)
-    - Our ALB already have a certficate from AWS manager that we created so our reverse proxy 
-# check: tutoria for how to create a self-signed certificate for nginx, also Apache
+Our ALB already have a certficate from AWS manager that we created so our reverse proxy 
+> [!NOTE]
+> check: tutoria for how to create a self-signed certificate for nginx, also Apache
 
         - connect to the nginx server via ssh
         - change to super user : sudo su -
