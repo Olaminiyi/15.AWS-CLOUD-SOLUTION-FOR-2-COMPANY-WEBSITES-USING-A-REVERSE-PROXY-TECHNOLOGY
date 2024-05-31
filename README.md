@@ -515,41 +515,55 @@ key administartor: set myself > finish
 
 ![alt text](images/15.80.png)
 
-    # The next pre requsite is to create a subnet group
-    - go to Amazon RDS service
-        - click on subnet group > Create DB subnet group
-        ![alt text](images/15.81.png)
+### The next pre requsite is to create a subnet group
+    
+Go to Amazon RDS service
+click on subnet group > Create DB subnet group
 
-        - name: ACS-rds-subnet
-        - chose VPC
-        ![alt text](images/15.82.png)
+![alt text](images/15.81.png)
 
-        - chose AZ (us-east-1a) and (us-east1b)
-        ** remember fom the diagram, The RDS are in private subnet 3 and 4.
-        ** from our design we are using odd numbers for our private subnet 
-        ** our RDS will take (10.0.5.0/24 and 10.0.7.0/24)
-        - choose the subnets > create
-        ![alt text](images/15.83.png)
-        ![alt text](images/15.84.png)
+name: ACS-rds-subnet
+chose VPC
 
-        - Go to dashboard > create database
-        - standard > MySql >(MySQl 8.0.23)
-        ![alt text](images/15.85.png)
+![alt text](images/15.82.png)
 
-        - choose free Tier
-        ![alt text](images/15.86.png)
-        ![alt text](images/15.87.png)
+chose AZ (us-east-1a) and (us-east1b)
+**Remember fom the diagram, The RDS are in private subnet 3 and 4**.
+**from our design we are using odd numbers for our private subnet**
+Our RDS will take (10.0.5.0/24 and 10.0.7.0/24)
+Choose the subnets > create
+ 
+![alt text](images/15.83.png)
 
-        - name: ACS-database 
-        - Master Username: change to ACSadmin 
-        - password :admin12345
-        ![alt text](images/15.88.png)
-        ![alt text](images/15.89.png)
-        ![alt text](images/15.90.png)
+![alt text](images/15.84.png)
 
-        - select VPC > the subnet will be automatically populated
-        - public access : NO
-        ![alt text](images/15.91.png)
+### Create Database
+
+Go to dashboard > create database
+standard > MySql >(MySQl 8.0.23)
+
+![alt text](images/15.85.png)
+
+**Choose free Tier**
+ 
+![alt text](images/15.86.png)
+
+![alt text](images/15.87.png)
+
+name: ACS-database 
+Master Username: change to ACSadmin 
+password :admin12345
+
+![alt text](images/15.88.png)
+ 
+![alt text](images/15.89.png)
+
+![alt text](images/15.90.png)
+
+select VPC > the subnet will be automatically populated
+public access : NO
+       
+![alt text](images/15.91.png)
 
         - VPC Security group: choose existing (ACS-datalayer)
         - AZ : you can choose between 1a or 1b
