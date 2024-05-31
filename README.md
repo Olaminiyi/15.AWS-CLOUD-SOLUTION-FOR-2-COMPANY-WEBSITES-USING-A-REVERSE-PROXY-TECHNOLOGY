@@ -716,40 +716,61 @@ sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 ![alt text](images/15.111.png)
 
 To check if the certificate was generated successfully, lets check the parth we save the (certificate and the param)
-            - ls -l /etc/ssl/certs/
-            - the ACS.crt and param are present
-            ![alt text](images/15.112.png)
+```
+ls -l /etc/ssl/certs/
+```   
+The ACS.crt and param are present
+ 
+![alt text](images/15.112.png)
 
-- let aslo check for the the key we created
-            - ls -l /etc/ssl/private/
-            ![alt text](images/15.113.png)
+let aslo check for the the key we created
+```
+ls -l /etc/ssl/private/
+```
+![alt text](images/15.113.png)
 
-# The next installation is for the webserver AMI
+### The next installation is for the webserver AMI
 
-        - connect to the webserver's server via ssh
-        - change to super user : sudo su -
-        - using the installation.md file for installation
-            - install the epel & remi repository
-                yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm 
-                yum install -y dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm 
-                ![alt text](images/15.114.png)
-                ![alt text](images/15.115.png)
+connect to the webserver's server via ssh
+change to super user : 
+```
+sudo su -
+```   
+using the installation.md file for installation
 
-        - install wget vim python3 telnet htop git mysql net-tools chrony -y 
-                yum install wget vim python3 telnet htop git mysql net-tools chrony -y 
- ![alt text](images/15.116.png)
+**Install the epel & remi repository**
+```
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm 
+yum install -y dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm 
+```
+![alt text](images/15.114.png)
 
-        - start and enable chronyd
-                systemctl start chronyd 
-                systemctl enable chronyd
- ![alt text](images/15.117.png)
+![alt text](images/15.115.png)
 
-        - configure selinux policies for the webservers and server
-            - paste this polices on the terminal
-                setsebool -P httpd_can_network_connect=1
-                setsebool -P httpd_can_network_connect_db=1
-                setsebool -P httpd_execmem=1
-                setsebool -P httpd_use_nfs 1
+**Install wget vim python3 telnet htop git mysql net-tools chrony -y**
+```               
+yum install wget vim python3 telnet htop git mysql net-tools chrony -y 
+``` 
+![alt text](images/15.116.png)
+
+Start and enable chronyd
+```
+systemctl start chronyd 
+systemctl enable chronyd
+```
+
+![alt text](images/15.117.png)
+
+### Configure selinux policies for the webservers and server
+
+Paste this polices on the terminal
+``` 
+setsebool -P httpd_can_network_connect=1
+setsebool -P httpd_can_network_connect_db=1
+setsebool -P httpd_execmem=1
+setsebool -P httpd_use_nfs 1
+```
+
 ![alt text](images/15.118.png)
 
 
