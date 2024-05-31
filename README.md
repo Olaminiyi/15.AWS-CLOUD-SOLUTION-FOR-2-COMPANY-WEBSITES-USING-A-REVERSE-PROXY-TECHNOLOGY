@@ -373,72 +373,93 @@ Click on request a Cert > Request public cert > Next
 In the domain name, we are going to use a **wild card i.e(*.)**
 should in case we want to have another `name` or `subdomain`, the `WILDCARD` will make sure that any name before the domain name is attached to the `certificate`. e.g **temi.olami.uk**
 
-put this for domain name: *.olami.uk
+put this for domain name: `*.olami.uk`
 chose DNS validation > 
-            ![alt text](images/15.51.png)
+        
+ ![alt text](images/15.51.png)
 
-        - Key Algorithm : RSA 2048
-        - for name or tags: ACS-cert > Review > confirm
-      ![alt text](images/15.52.png)
+Key Algorithm : RSA 2048
+for name or tags: ACS-cert > Review > confirm
 
-    # Because we are using DNS verification is going to automatically write to the Rout53 to confirm
-        - click on create records in Route53
-     ![alt text](images/15.57.png)
+![alt text](images/15.52.png)
 
-        - The verification maybe pending for a while but will be issued after confirmation
-     ![alt text](images/15.98.png)
+> [!NOTE]
+> Because we are using DNS verification is going to automatically write to the Rout53 to confirm
+   
+click on create records in Route53
 
-    # certificate will be attched to ALB
+![alt text](images/15.57.png)
 
-    # the next service to create is Elastic file system
-        - go to amazon file system service > create file system
-        - name: ACS-filesystem
-        - select PVC
-     ![alt text](images/15.59.png)
+> [!NOTE] 
+> The verification maybe pending for a while but will be issued after confirmation
+  
+![alt text](images/15.98.png)
 
-        -Regional
-        - click on customize > Next
-       ![alt text](images/15.60.png)
-        ![alt text](images/15.61.png)
-        ![alt text](images/15.62.png)
+Certificate will be attched to ALB
 
-    # we want to add mount target to our filesystem which simply means specifying the subnet
-    # any resources in the subnet we specify will be able to mount on the file system 
-    # from the diagram we can se that the webservers that want to ount on the file system and in private subnet 1 & 2
-    # if we mistakenly put file system in private subnet 3 & 4 that means our webserver will not be able to mount on the file system because we have not created mount target in their subnet
-        - so chose private subnet 1 for us-east-1a
-        - chose private subnet 2 for us-east-1b
-        - for the security group; chose ACS-datalayer for both > next > create
-     ![alt text](images/15.63.png)
-        ![alt text](images/15.64.png)
+### The next service to create is Elastic file system
+       
+Go to amazon file system service > create file system
+name: ACS-filesystem
+select PVC
 
-    # The next thing we are going to create is access point for the file system
-    # Access point is what we specified for servers to mount with
-    # we are creating 2 access point, one for wordpress and Tooling
-    # we are creating 2 access point so we don't have to mount 2 webservers on a single access point
-    # if we do that, the files will overwrite each other and that will mess up our infrastructure
-        - create Access point under EFS service
-        - for file name: choose the already created "ACS-filesytem"
-        - for the first one; Name : wordpress for tag - wordpree-ap (access point)
-        - root directory: /wordpress
-    ![alt text](images/15.65.png)
+![alt text](images/15.59.png)
 
-        - POSIX user; set it to the root user = 0
-        - Group ID = 0
-        - leave secondary empty
-    ![alt text](images/15.66.png)
+Regional
+click on customize > Next
 
-        - under Root directory creation permission
-            - owner ID = 0
-            - owner group ID = 0
-            - for the POSIX permission, we want our file to be able to read & write
-            - we set to 0755 > create access point
-     ![alt text](images/15.67.png) 
+![alt text](images/15.60.png)
+
+![alt text](images/15.61.png)
+
+![alt text](images/15.62.png)
+
+We want to add mount target to our filesystem which simply means specifying the subnet
+Any resources in the subnet we specify will be able to mount on the file system 
+From the diagram we can se that the webservers that want to ount on the file system and in `private subnet 1 & 2`
+
+If we mistakenly put file system in `private subnet 3 & 4`that means our webserver will not be able to mount on the file system because we have not created `mount target` in their subnet
+
+so chose private subnet 1 for us-east-1a
+chose private subnet 2 for us-east-1b
+
+For the security group; chose ACS-datalayer for both > next > create
+     
+![alt text](images/15.63.png)
+
+![alt text](images/15.64.png)
+
+The next thing we are going to create is access point for the file system
+Access point is what we specified for servers to mount with
+we are creating 2 access point, one for `wordpress` and `Tooling`
+we are creating 2 access point so we don't have to mount 2 webservers on a single access point
+if we do that, the files will overwrite each other and that will mess up our infrastructure
+create Access point under `EFS service`
+For file name: choose the already created "ACS-filesytem"
+**For the first one; Name : wordpress for tag - wordpree-ap (access point)**
+root directory: /wordpress
+
+![alt text](images/15.65.png)
+
+POSIX user; set it to the root user = 0
+Group ID = 0
+leave secondary empty
+
+![alt text](images/15.66.png)
+
+under Root directory creation permission
+owner ID = 0
+owner group ID = 0
+for the POSIX permission, we want our file to be able to read & write
+we set to 0755 > create access point
+
+![alt text](images/15.67.png) 
             
-        - for the second one Tooling
-            - Name tooling
-            -root directory: /tooling
-      ![alt text](images/15.68.png)
+**for the second one Tooling**
+Name tooling
+root directory: /tooling
+
+![alt text](images/15.68.png)
 
             - POSIX user; set it to the root user = 0
             - Group ID = 0
