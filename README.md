@@ -964,235 +964,265 @@ certificate type : choose a certificate from ACM, it will automatically chose th
 
 ![alt text](images/15.154.png)
 
-# To configure our internal load balancer to be routing to tooling
-        - select ACS-int-ALB > Listeners > choose the HTTPS:443 > Manage rules > edit rules
- ![alt text](images/15.155.png)
-        ![alt text](images/15.156.png)
+### To configure our internal load balancer to be routing to tooling
 
-# Because we can configure host header in our nginx reverse proxy server, we can ask our int LB to check for host header.
-# and check for tooling.olami.uk and www.tooling.olami.uk
-        - Add rules > Tags: tooling > add condition > Host Header
-   ![alt text](images/15.157.png)
-        ![alt text](images/15.158.png)
+select ACS-int-ALB > Listeners > choose the HTTPS:443 > Manage rules > edit rules
 
-        - Next
-        - forwards to target group: choose ACS-tooling-target > Next
-  ![alt text](images/15.159.png)
+![alt text](images/15.155.png)
+   
+![alt text](images/15.156.png)
 
-        - rule priority : 10 > next
- ![alt text](images/15.160.png)
+**Because we can configure host header in our nginx reverse proxy server, we can ask our int LB to check for host header.**
+**and check for tooling.olami.uk and www.tooling.olami.uk**
 
-# The next step is to create our lauch template
-# for me in case of another proj: take note of the protocol (HTTP or HTTPS )
-# go to reverse.conf of the forked repo and read the instruction and make changes before proceeding
+Add rules > Tags: tooling > add condition > Host Header
 
-# ===========================================================================================================
-#    - go to load balancer
-#    - select the ACS-int-ALB 
-#    - click on details > copy the DNS name
-# ![alt text](images/15.176.png)
- #   - go to your github repo, the reverse.conf file of the repo you clone i.e  https://github.com/Olaminiyi/ACS-project-config.git 
- #   - under server : update the server name to the name of your domain: *.olami.uk;
- #   - under the proxy_pass, update the address to the DNS name of ACS-int-ALB you copied
- #   - commit the changes
- #   ![alt text](images/15.175.png)
-# ============================================================================================================
+![alt text](images/15.157.png)
 
-# the first launch template will be for the bastion
-        - click on launch template > create launch template
- ![alt text](images/15.161.png)
+![alt text](images/15.158.png)
 
-        - Name : ACS-bastion-template
-        - descri- for bastion
- ![alt text](images/15.162.png)
+Next
+forwards to target group: choose ACS-tooling-target > Next
 
-        - Application OS & Image
-            - My AMI > owned by me
-             - ACS-baston-AMi
+![alt text](images/15.159.png)
+
+rule priority : 10 > next
+
+![alt text](images/15.160.png)
+
+### The next step is to create our lauch template
+> [!NOTE]
+> for me in case of another proj: take note of the protocol (HTTP or HTTPS )
+> go to reverse.conf of the forked repo and read the instruction and make changes before proceeding
+
+**The first launch template will be for the bastion**
+click on launch template > create launch template
+
+![alt text](images/15.161.png)
+
+Name : ACS-bastion-template
+descri- for bastion
+
+![alt text](images/15.162.png)
+
+Application OS & Image
+My AMI > owned by me
+ACS-baston-AMi
+
 ![alt text](images/15.163.png)
 
-        - instant type : t2.micro
-        - select key pairs: your key
- ![alt text](images/15.164.png)
+instant type : t2.micro
+select key pairs: your key
 
-        - Network settings:
-            - subnet: either public subnet 1 or 2 (it has to be in public subnet) choose pub 1
-            - Advance network configuration
-                - security group : ACS-bastion
-                - Auto Assign public IP : Enable
- ![alt text](images/15.165.png)
-                ![alt text](images/15.166.png)
+![alt text](images/15.164.png)
 
-        - on advance details
-        - leave as default then go to user data
-            - user data:
-            #!/bin/bash
-            yum install -y mysql
-            yum install -y git tmux
-            yum install -y ansible
+Network settings:
+subnet: either public subnet 1 or 2 (it has to be in public subnet) choose pub 1
+Advance network configuration
+security group : ACS-bastion
+Auto Assign public IP : Enable
 
-        - create Launch Template
+![alt text](images/15.165.png)
+
+![alt text](images/15.166.png)
+
+on advance details
+leave as default then go to user data
+user data:
+ ```
+#!/bin/bash
+yum install -y mysql
+yum install -y git tmux
+yum install -y ansible
+```
+create Launch Template
+
 ![alt text](images/15.167.png)
-        ![alt text](images/15.168.png)
+
+![alt text](images/15.168.png)
         
 
-# The next launch template will be for the nginx
-        - click on launch template > create launch template
-        
-        - Name : ACS-nginx-template
-        - descri- for nginx
+### The next launch template will be for the nginx
+
+click on launch template > create launch template
+Name : ACS-nginx-template
+descri- for nginx
+
 ![alt text](images/15.169.png)
 
-        - Application OS & Image
-            - My AMI > owned by me
-             - ACS-nginx-AMi
- ![alt text](images/15.170.png)
+Application OS & Image
+My AMI > owned by me
+ACS-nginx-AMi
 
-        - instant type : t2.micro
-        - select key pairs: your key
- ![alt text](images/15.171.png)
+![alt text](images/15.170.png)
 
-        - Network settings:
-            - subnet: either public subnet 1 or 2 (it has to be in public subnet) choose pub 2
-            - Advance network configuration
-                - security group : ACS-nginx
-                - Auto Assign public IP : Enable
+instant type : t2.micro
+select key pairs: your key
+
+![alt text](images/15.171.png)
+
+Network settings:
+subnet: either public subnet 1 or 2 (it has to be in public subnet) choose pub 2
+Advance network configuration
+        security group : ACS-nginx
+        Auto Assign public IP : Enable
+
 ![alt text](images/15.172.png)
-                - Add a tag name;  Name : ACS-nginx-template 
-                ![alt text](images/15.173.png)
+   
+Add a tag name;  Name : ACS-nginx-template 
 
-        - on advance details
-        - leave as default and go to user data
-# Read the instruction at the top of nginx-userdata and make changes before you copy it
-            - user data:
-            ##!/bin/bash
-            yum install -y nginx
-            systemctl start nginx
-            systemctl enable nginx
-            git clone https://github.com/Olaminiyi/ACS-project-config.git
-            mv /ACS-project-config/reverse.conf /etc/nginx/
-            mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf-distro
-            cd /etc/nginx/
-            touch nginx.conf
-            sed -n 'w nginx.conf' reverse.conf
-            systemctl restart nginx
-            rm -rf reverse.conf
-            rm -rf /ACS-project-config
-        - create Launch Template
- ![alt text](images/15.174.png)
+![alt text](images/15.173.png)
 
-# The next launch template will be for the wordpress
-    - Read the instruction in wordpress-userdata first before proceeding
+on advance details
+leave as default and go to user data
 
-# ===================================================================================================
-# for wordpress data, we need to update the mount point to our file system 
-#      go to EFS > Access point > select wordpress
-# ![alt text](images/15.177.png)
-#       View details > Attach 
-# ![alt text](images/15.178.png)
+> [!NOTE]
+> Read the instruction at the top of nginx-userdata and make changes before you copy it
 
-# copy efs mount helper without last efs part
-# ![alt text](images/15.179.png)
-# paste it to replace mount point in wordpress-userdata
+user data:
+```
+##!/bin/bash
+yum install -y nginx
+systemctl start nginx
+systemctl enable nginx
+git clone https://github.com/Olaminiyi/ACS-project-config.git
+mv /ACS-project-config/reverse.conf /etc/nginx/
+mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf-distro
+cd /etc/nginx/
+touch nginx.conf
+sed -n 'w nginx.conf' reverse.conf
+systemctl restart nginx
+rm -rf reverse.conf
+rm -rf /ACS-project-config
+```
 
-# we are creating healthstatus file (empty) so the loadbalancer will see our instance as healthy
-# we need to change our rds endpoint
-# go to rds > Db instances(1/40) 
-# ![alt text](images/15.180.png)
-# click on acs-database
-# ![alt text](images/15.181.png)
-# copy the endpoint
-# ![alt text](images/15.182.png)
-# paste it between "sed -i "s/localhost/.........../g" wp-config.php " in wordpress-userdata.md file
-# note that we have not created wordpressdb on line.., but we are going to create it
-# ===========================================================================================================
+create Launch Template
 
-        - click on launch template > create launch template
-        
-        - Name : ACS-wordpress-template
-        - descri- for wordpress
-        - Add Tag: Name : ACS-wordpress-template
+![alt text](images/15.174.png)
+
+### The next launch template will be for the wordpress
+
+Read the instruction in wordpress-userdata first before proceeding
+
+> [!IMPORTANT]
+> for wordpress data, we need to update the mount point to our file system 
+> go to EFS > Access point > select wordpress
+> ![alt text](images/15.177.png)
+>  View details > Attach 
+> ![alt text](images/15.178.png)
+> copy efs mount helper without last efs part
+> ![alt text](images/15.179.png)
+> paste it to replace mount point in wordpress-userdata
+> we are creating healthstatus file (empty) so the loadbalancer will see our instance as healthy
+> we need to change our rds endpoint
+> go to rds > Db instances(1/40) 
+> ![alt text](images/15.180.png)
+> click on acs-database
+> ![alt text](images/15.181.png)
+> copy the endpoint
+> ![alt text](images/15.182.png)
+> paste it between "sed -i "s/localhost/.........../g" wp-config.php " in wordpress-userdata.md file
+> note that we have not created wordpressdb on line.., but we are going to create it
+
+
+**click on launch template > create launch template**
+
+Name : ACS-wordpress-template
+descri- for wordpress
+Add Tag: Name : ACS-wordpress-template
+
 ![alt text](images/15.183.png)
 
-        - Application OS & Image
-            - My AMI > owned by me
-             - ACS-webserver-AMi   (wordpress and tooling are using webserver AMI)
+Application OS & Image
+My AMI > owned by me
+ACS-webserver-AMi   (wordpress and tooling are using webserver AMI)
+
 ![alt text](images/15.184.png)
 
-        - instant type : t2.micro
-        - select key pairs: your key
+instant type : t2.micro
+select key pairs: your key
+
 ![alt text](images/15.185.png)      
 
-        - Network settings:
-            - subnet: either private subnet 1 or 2 (it has to be in private subnet) choose private 1
-            - Advance network configuration
-                - security group : ACS-webserver
-                - Auto Assign public IP : Disable (if enable it will still not be reachable because is attach to Nat gateway)
+**Network settings:**
+subnet: either private subnet 1 or 2 (it has to be in private subnet) choose private 1
+Advance network configuration
+- security group : ACS-webserver
+- Auto Assign public IP : Disable (if enable it will still not be reachable because is attach to Nat gateway)
+
 ![alt text](images/15.186.png)
-                - Add a tag name;  Name : ACS-wordpress-template 
+
+- Add a tag name;  Name : ACS-wordpress-template 
                 
 
-        - on advance details
-        - leave as default and go to user data
+On advance details
+- leave as default and go to user data
 
-            - user data:
-                #!/bin/bash
-                mkdir /var/www/
-                sudo mount -t efs -o tls,accesspoint=fsap-05cde16db4212f446 fs-07d12dccdc93fa0bd:/ /var/www/
-                yum install -y httpd 
-                systemctl start httpd
-                systemctl enable httpd
-                yum module reset php -y
-                yum module enable php:remi-7.4 -y
-                yum install -y php php-common php-mbstring php-opcache php-intl php-xml php-gd php-curl php-mysqlnd php-fpm php-json
-                systemctl start php-fpm
-                systemctl enable php-fpm
-                wget http://wordpress.org/latest.tar.gz
-                tar xzvf latest.tar.gz
-                rm -rf latest.tar.gz
-                cp wordpress/wp-config-sample.php wordpress/wp-config.php
-                mkdir /var/www/html/
-                cp -R /wordpress/* /var/www/html/
-                cd /var/www/html/
-                touch healthstatus
-                sed -i "s/localhost/acs-database.cxgqmm0me4bb.us-east-1.rds.amazonaws.com/g" wp-config.php 
-                sed -i "s/username_here/ACSadmin/g" wp-config.php 
-                sed -i "s/password_here/admin12345/g" wp-config.php 
-                sed -i "s/database_name_here/wordpressdb/g" wp-config.php 
-                chcon -t httpd_sys_rw_content_t /var/www/html/ -R
-                systemctl restart httpd
+**user data:**
+```
+#!/bin/bash
+mkdir /var/www/
+sudo mount -t efs -o tls,accesspoint=fsap-05cde16db4212f446 fs-07d12dccdc93fa0bd:/ /var/www/
+yum install -y httpd 
+systemctl start httpd
+systemctl enable httpd
+yum module reset php -y
+yum module enable php:remi-7.4 -y
+yum install -y php php-common php-mbstring php-opcache php-intl php-xml php-gd php-curl php-mysqlnd php-fpm php-json
+systemctl start php-fpm
+systemctl enable php-fpm
+wget http://wordpress.org/latest.tar.gz
+tar xzvf latest.tar.gz
+rm -rf latest.tar.gz
+cp wordpress/wp-config-sample.php wordpress/wp-config.php
+mkdir /var/www/html/
+cp -R /wordpress/* /var/www/html/
+cd /var/www/html/
+touch healthstatus
+sed -i "s/localhost/acs-database.cxgqmm0me4bb.us-east-1.rds.amazonaws.com/g" wp-config.php 
+sed -i "s/username_here/ACSadmin/g" wp-config.php 
+sed -i "s/password_here/admin12345/g" wp-config.php 
+sed -i "s/database_name_here/wordpressdb/g" wp-config.php 
+chcon -t httpd_sys_rw_content_t /var/www/html/ -R
+systemctl restart httpd
+```
+
 ![alt text](images/15.187.png)
   
-# The next launch template will be for the tooling
-        - click on launch template > create launch template
+### The next launch template will be for the tooling
+
+click on launch template > create launch template
         
-        - Name : ACS-tooling-template
-        - descri- for tooling
- ![alt text](images/15.188.png)
+- Name : ACS-tooling-template
+- descri- for tooling
 
-        - Application OS & Image
-            - My AMI > owned by me
-             - ACS-webserver-AMi
- ![alt text](images/15.189.png)      
+![alt text](images/15.188.png)
 
-        - instant type : t2.micro
-        - select key pairs: your key
-  ![alt text](images/15.190.png)           
+- Application OS & Image
+- My AMI > owned by me
+- ACS-webserver-AMi
 
-        - Network settings:
-            - subnet: either private subnet 1 or 2 (it has to be in private subnet) choose private 2
-            - Advance network configuration
-                - security group : ACS-webserver
-                - Auto Assign public IP : Disable
-  ![alt text](images/15.191.png)    
+![alt text](images/15.189.png)      
 
-                - Add a tag name;  Name : ACS-tooling-template 
-                
+- instant type : t2.micro
+- select key pairs: your key
 
-        - on advance details
-        - leave as default and go to user data
+![alt text](images/15.190.png)           
 
-- user data:
+**Network settings:**
+- subnet: either private subnet 1 or 2 (it has to be in private subnet) choose private 2
+- Advance network configuration
+- security group : ACS-webserver
+- Auto Assign public IP : Disable
+
+![alt text](images/15.191.png)    
+
+- Add a tag name;  Name : ACS-tooling-template 
+- on advance details
+- leave as default and go to user data
+
+**user data:**
+```
 #!/bin/bash
 mkdir /var/www/
 sudo mount -t efs -o tls,accesspoint=fsap-0e9251530ad655e9d fs-07d12dccdc93fa0bd:/ /var/www/
@@ -1214,6 +1244,7 @@ touch healthstatus
 sed -i "s/$db = mysqli_connect('mysql.tooling.svc.cluster.local', 'admin', 'admin', 'tooling');/$db = mysqli_connect('acs-database.cxgqmm0me4bb.us-east-1.rds.amazonaws.com', 'ACSadmin', 'admin12345', 'toolingdb');/g" functions.php
 chcon -t httpd_sys_rw_content_t /var/www/html/ -R
 systemctl restart httpd
+```
 
 ![alt text](images/15.192.png)
 
