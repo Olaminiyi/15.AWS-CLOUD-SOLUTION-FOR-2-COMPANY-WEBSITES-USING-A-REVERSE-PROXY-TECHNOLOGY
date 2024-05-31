@@ -192,46 +192,57 @@ Click on elastic IP > allocate Elastic IP
  
 ![alt text](images/15.25.png)
     
-        - Name it ACS-NAT > Allocate
-     ![alt text](images/15.26.png)
-        ![alt text](images/15.27.png)
+Name it ACS-NAT > Allocate
 
-    # Note that if you allocate an Elastip IP without attaching it to a resources you get charged but if you associate to a resources you won't get charged
+![alt text](images/15.26.png)
 
-    # Next step is to create NAT Gateway
-        - click on Nat gateway > create a Natgateway
-      ![alt text](images/15.28.png)
+![alt text](images/15.27.png)
 
-        - name it (ACS-natgateway)
-        - Natgate must be placed in PUBLIC
-      ![alt text](images/15.29.png)
+Note that if you allocate an `Elastip IP` without attaching it to a resources you get charged but if you associate to a resources you won't get charged
 
-        - placed it in ACS-public-subnet-1
-        - placed it in elastic IP created > Create
-     ![alt text](images/15.30.png)
+### Next step is to create NAT Gateway
+    
+Click on Nat gateway > create a Natgateway
 
-    # lets go back to our route table
-    # Rememer we connecting to NAT GATEWAY here because it is Private (unlike the public Public route that can communicate 2 ways with internet gateway)
-        - click on Route table > Private Route
-        - Action > Edit Route 
-      ![alt text](images/15.31.png)
+![alt text](images/15.28.png)
 
-        - click on Add route
-        - let it have access to the internet by open it to 0.0.0/0
-        - select NAT GATEWAY > select the created Nat gateway > save changes
-     ![alt text](images/15.32.png)
+Name it (ACS-natgateway)
+Natgate must be placed in PUBLIC
+      
+![alt text](images/15.29.png)
 
-    # The next step is to create the security group 
-    # we will creat security group for the application load balancer and the resources we have
-        - The first security group is for the external load balancer
-        - Under Security > Security group > create security group
-    ![alt text](images/15.33.png)
+Placed it in ACS-public-subnet-1
+Placed it in elastic IP created > Create
+ 
+![alt text](images/15.30.png)
 
-        - named it ACS-ext-ALB > Descrip(for ext ALB)
-        - select the ACS-VPC
-     ![alt text](images/15.34.png)
+Lets go back to our route table
+Rememer we connecting to `NAT GATEWAY` here because it is Private (unlike the public Public route that can communicate 2 ways with internet gateway)
+       
+Click on Route table > Private Route
+Action > Edit Route 
+ 
+![alt text](images/15.31.png)
 
-        - EDIT THE INBOUND RULES
+Click on Add route
+let it have access to the internet by open it to 0.0.0/0
+select NAT GATEWAY > select the created Nat gateway > save changes
+
+![alt text](images/15.32.png)
+
+The next step is to create the security group 
+we will creat security group for the application load balancer and the resources we have
+The first security group is for the external load balancer
+Under Security > Security group > create security group
+
+![alt text](images/15.33.png)
+
+Named it ACS-ext-ALB > Descrip(for ext ALB)
+Select the ACS-VPC
+ 
+![alt text](images/15.34.png)
+
+EDIT THE INBOUND RULES
             - for the external ALB, we want it to be accessible on the internet from anywhere
             - give it both HTTPS and HTTP from anywhere 0.0.0.0/0
             ![alt text](images/15.35.png)
