@@ -774,144 +774,195 @@ setsebool -P httpd_use_nfs 1
 ![alt text](images/15.118.png)
 
 
-        - the next step is to install amazon efs utils for mounting the target on the Elastic file system
-        - copy these steps and paste to the terminals
+### The next step is to install amazon efs utils for mounting the target on the Elastic file system
 
-                git clone https://github.com/aws/efs-utils
-                cd efs-utils
-                yum install -y make
-                yum install -y rpm-build
-                make rpm 
-                yum install -y  ./build/amazon-efs-utils*rpm
+copy these steps and paste to the terminals
+```
+git clone https://github.com/aws/efs-utils
+cd efs-utils
+yum install -y make
+yum install -y rpm-build
+make rpm 
+yum install -y  ./build/amazon-efs-utils*rpm
+```
 
  ![alt text](images/15.119.png)
-                ![alt text](images/15.120.png)
-                ![alt text](images/15.121.png)
-                ![alt text](images/15.122.png)
+
+![alt text](images/15.120.png)
+
+![alt text](images/15.121.png)
+ 
+![alt text](images/15.122.png)
         
-        - seting up self-signed certificate for the apache webserver instance
-                yum install -y mod_ssl
-  ![alt text](images/15.123.png)
+**seting up self-signed certificate for the apache webserver instance**
+```
+yum install -y mod_ssl
+```
 
-                openssl req -newkey rsa:2048 -nodes -keyout /etc/pki/tls/private/ACS.key -x509 -days 365 -out /etc/pki/tls/certs/ACS.crt
-  ![alt text](images/15.124.png)
+![alt text](images/15.123.png)
 
-        - We want to change the path SSLCertificateFile : from localhost to the name we use to generate our certificate and key (ACS) or any name you use in generating your key
-                vi /etc/httpd/conf.d/ssl.conf
- ![alt text](images/15.125.png)
+```                
+openssl req -newkey rsa:2048 -nodes -keyout /etc/pki/tls/private/ACS.key -x509 -days 365 -out /etc/pki/tls/certs/ACS.crt
+```
+  
+![alt text](images/15.124.png)
 
-# The next steps is to create image out of our 3 instances (Bastion, webserver and Nginx)
-        - go to your instances on the AWS console 
-            - For webserver 
-                - select  webserver 
-                - action > images and template > create image
- ![alt text](images/15.126.png)
+We want to change the path `SSLCertificateFile` : from `localhost` to the name we use to generate our `certificate` and `key` (ACS) or any name you use in generating your key
+```
+vi /etc/httpd/conf.d/ssl.conf
+```
 
-                - Name : ACS-webserver-ami 
-                - description: for webserver
-                Tag: Name : ACS-webserver-ami 
-                create
- ![alt text](images/15.127.png)
+![alt text](images/15.125.png)
+
+### The next steps is to create image out of our 3 instances (Bastion, webserver and Nginx)
+
+Go to your instances on the AWS console 
+**For webserver** 
+select  webserver 
+action > images and template > create image
+
+![alt text](images/15.126.png)
+
+Name : ACS-webserver-ami 
+description: for webserver
+Tag: Name : ACS-webserver-ami 
+create
+
+![alt text](images/15.127.png)
             
-             - For bastion 
-                - select  bastion
-                - action > images and template > create image
-  ![alt text](images/15.128.png)
+**For bastion** 
+select  bastion
+action > images and template > create image
 
-                - Name : ACS-bastion-ami 
-                - description: for webserver
-                Tag: Name : ACS-bastion-ami 
-                create
-  ![alt text](images/15.129.png)
+![alt text](images/15.128.png)
 
-            - For Nginx 
-                - select  nginx
-                - action > images and template > create image
-  ![alt text](images/15.130.png)
+Name : ACS-bastion-ami 
+description: for webserver
+Tag: Name : ACS-bastion-ami 
+create
 
-                - Name : ACS-nginx-ami 
-                - description: for webserver
-                Tag: Name : ACS-nginx-ami 
-                create
-  ![alt text](images/15.131.png)
-                ![alt text](images/15.132.png)
+![alt text](images/15.129.png)
 
-# The next step is to create the Target while the AMI are still pending
-# Note we are not creating a target group for the bastion; from our diagram, the bastion is not placed behind the load balancer. 
-# we are only creating target group for the instances behind laod balancer which are (Nginx, weservers(tooling & wordpress))
-            - Click on Target Groups > create target group
-  ![alt text](images/15.133.png)
-            - select instance 
-            ![alt text](images/15.134.png)
-            - Target group name : ACS-nginx-target
-            ![alt text](images/15.135.png)
-            - protocol : HTTPS :443 (from the documentation)
-            - select PVC
-            - Health check path: /healthstatus
-            - Tag :Name : ACS-nginx-target 
-            ![alt text](images/15.136.png)
-            ![alt text](images/15.137.png)
+**For Nginx** 
+select  nginx
+action > images and template > create image
 
-        - Create another one for wordpress with the same process
-        - Name: ACS-wordpress-target
- ![alt text](images/15.138.png)
-        ![alt text](images/15.139.png)
+![alt text](images/15.130.png)
 
-        - Create another one for tooling with the same process
-        - Name ACS-tooling-target
- ![alt text](images/15.140.png)
-            ![alt text](images/15.141.png)
+Name : ACS-nginx-ami 
+description: for webserver
+Tag: Name : ACS-nginx-ami 
+create
 
-# The next step is to create our load balancer
-    - The first one is the external load balancer
-        - click on Load balancer > create load balancer > choose Load balancer
- ![alt text](images/15.142.png)
+![alt text](images/15.131.png)
 
-        -Name: ACS-ext-ALB
-        - internet facing
-        - IP address type : IPv4
- ![alt text](images/15.143.png)
+![alt text](images/15.132.png)
 
-        - choose VPC
-        - Mapping : AVailability zone (we need 2 zones) : and our externer load balancer must be in public subnet
-            - us-east-1a  - public subnet 1
-            - us-east-1b  - public subnet 2
+The next step is to create the Target while the AMI are still pending
+>[!NOTE] 
+> Note we are not creating a target group for the bastion; from our diagram, the bastion is not placed behind the load balancer. 
+>we are only creating target group for the instances behind laod balancer which are (Nginx, weservers(tooling & wordpress))
+            
+Click on Target Groups > create target group
+
+![alt text](images/15.133.png)
+            
+select instance 
+
+![alt text](images/15.134.png)
+       
+Target group name : ACS-nginx-target
+
+![alt text](images/15.135.png)
+
+protocol : HTTPS :443 (from the documentation)
+select PVC
+Health check path: /healthstatus
+Tag :Name : ACS-nginx-target 
+
+![alt text](images/15.136.png)
+
+![alt text](images/15.137.png)
+
+Create another one for wordpress with the same process
+Name: ACS-wordpress-target
+
+![alt text](images/15.138.png)
+ 
+![alt text](images/15.139.png)
+
+Create another one for tooling with the same process
+Name ACS-tooling-target
+
+![alt text](images/15.140.png)
+
+![alt text](images/15.141.png)
+
+### The next step is to create our load balancer
+
+The first one is the external load balancer
+click on Load balancer > create load balancer > choose Load balancer
+
+![alt text](images/15.142.png)
+
+Name: ACS-ext-ALB
+**internet facing**
+IP address type : IPv4
+
+![alt text](images/15.143.png)
+
+Choose VPC
+Mapping : AVailability zone (we need 2 zones) : and our externer load balancer must be in public subnet
+        us-east-1a  - public subnet 1
+        us-east-1b  - public subnet 2
+ 
  ![alt text](images/15.144.png)
 
-        - security group : ACS-ext-ALB
-        - Listener : HTTPS (because the target group is on HTTPS)
-        - Routing : select ACS-nginx-target (because our external LB is forwarding traffick to nginx )
+security group : ACS-ext-ALB
+Listener : HTTPS (because the target group is on HTTPS)
+Routing : select ACS-nginx-target (because our external LB is forwarding traffick to nginx )
+
 ![alt text](images/15.145.png)
 
-        - certificate type : choose a certificate from ACM, it will automatically chose the certificate name
-  ![alt text](images/15.146.png)
-        - >> create
-        ![alt text](images/15.147.png)
-        ![alt text](images/15.148.png)
+certificate type : choose a certificate from ACM, it will automatically chose the certificate name
 
-#  The second one is the internal load balancer
+![alt text](images/15.146.png)
+   
+**create**
+
+![alt text](images/15.147.png)
+ 
+![alt text](images/15.148.png)
+
+###  The second one is the internal load balancer
         
-        -Name: ACS-int-ALB
-        - internet facing
-        - IP address type : IPv4
- ![alt text](images/15.149.png)
+Name: ACS-int-ALB
+**internet facing**
+IP address type : IPv4
 
-        - choose VPC
-        - Mapping : AVailability zone (we need 2 zones) : and our internal load balancer is residing in the private sub 1 & 2
-            - us-east-1a  - private subnet 1
-            - us-east-1b  - private subnet 2
+![alt text](images/15.149.png)
+
+Choose VPC
+Mapping : AVailability zone (we need 2 zones) : and our internal load balancer is residing in the `private sub 1 & 2`
+    us-east-1a  - private subnet 1
+    us-east-1b  - private subnet 2
+
 ![alt text](images/15.150.png)
 
-        - security group : ACS-int-ALB
- ![alt text](images/15.151.png)
+security group : ACS-int-ALB
 
-        - Listener : HTTPS (because the target group is on HTTPS)
-        - Routing : select ACS-wordpress-target (our internal LB is forwarding to both wordpress and tooling, lets use wordpress as default )
- ![alt text](images/15.152.png)
+![alt text](images/15.151.png)
 
-        - certificate type : choose a certificate from ACM, it will automatically chose the certificate name
+Listener : HTTPS (because the target group is on HTTPS)
+Routing : select ACS-wordpress-target (our internal LB is forwarding to both wordpress and tooling, lets use wordpress as default )
+
+![alt text](images/15.152.png)
+
+certificate type : choose a certificate from ACM, it will automatically chose the certificate name
+
 ![alt text](images/15.153.png)
-        ![alt text](images/15.154.png)
+
+![alt text](images/15.154.png)
 
 # To configure our internal load balancer to be routing to tooling
         - select ACS-int-ALB > Listeners > choose the HTTPS:443 > Manage rules > edit rules
