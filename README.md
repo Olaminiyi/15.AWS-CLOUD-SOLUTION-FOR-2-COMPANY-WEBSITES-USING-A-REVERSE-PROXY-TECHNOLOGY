@@ -461,30 +461,39 @@ root directory: /tooling
 
 ![alt text](images/15.68.png)
 
-            - POSIX user; set it to the root user = 0
-            - Group ID = 0
-            - leave secondary empty
-     ![alt text](images/15.69.png)
+POSIX user; set it to the root user = 0
+Group ID = 0
+leave secondary empty
 
-            - under Root directory creation permission
-            - owner ID = 0
-            - owner group ID = 0
-            - for the POSIX permission, we want our file to be able to read & write
-            - we set to 0755 > create access point
-      ![alt text](images/15.70.png)
-            ![alt text](images/15.71.png)
+![alt text](images/15.69.png)
 
-    # use the IAM service of the AWS to create a user
-    - create user > 
-    ![alt text](images/15.74.png)
+under Root directory creation permission
+owner ID = 0
+owner group ID = 0
+for the POSIX permission, we want our file to be able to read & write
+we set to 0755 > create access point
 
-    - enter username and password > next > create a group
-    ![alt text](images/15.75.png)
-    ![alt text](images/15.76.png)
+![alt text](images/15.70.png)
 
-    - name : user > assign permission policies > create user group
-    ![alt text](images/15.77.png)
-    ![alt text](images/15.78.png)
+![alt text](images/15.71.png)
+
+### use the IAM service of the AWS to create a user
+
+**create user >** 
+    
+![alt text](images/15.74.png)
+
+Enter username and password > next > create a group
+ 
+![alt text](images/15.75.png)
+
+![alt text](images/15.76.png)
+
+Name : user > assign permission policies > create user group
+ 
+![alt text](images/15.77.png)
+
+![alt text](images/15.78.png)
    
     
     # To set up RDS we need to create KMS key to be used to encrypt the database instance
