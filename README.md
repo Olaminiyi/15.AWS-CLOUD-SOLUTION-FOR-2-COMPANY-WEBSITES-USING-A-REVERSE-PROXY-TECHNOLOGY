@@ -635,66 +635,87 @@ Our ALB already have a certficate from AWS manager that we created so our revers
 > [!NOTE]
 > check: tutoria for how to create a self-signed certificate for nginx, also Apache
 
-        - connect to the nginx server via ssh
-        - change to super user : sudo su -
-        - using the installation.md file for installation
-            - install the epel & remi repository
-            yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm 
-            yum install -y dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm 
-   ![alt text](images/15.101.png)
-            ![alt text](images/15.102.png)
+Connect to the nginx server via ssh
+change to super user : 
+```
+sudo su -
+```   
+Using the installation.md file for installation
+Install the epel & remi repository
+``` 
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm 
+yum install -y dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm 
+```
+![alt text](images/15.101.png)
+![alt text](images/15.102.png)
 
-         - install wget vim python3 telnet htop git mysql net-tools chrony -y 
-            yum install wget vim python3 telnet htop git mysql net-tools chrony -y 
+Install wget vim python3 telnet htop git mysql net-tools chrony -y 
+```
+yum install wget vim python3 telnet htop git mysql net-tools chrony -y 
+```
 ![alt text](images/15.103.png)
 
-         - start and enable chronyd
-            systemctl start chronyd 
-             systemctl enable chronyd
- ![alt text](images/15.104.png)
+start and enable chronyd
+```
+systemctl start chronyd 
+systemctl enable chronyd
+```
 
-# configure selinux policies for the webservers and nginx servers
-        - paste this polices on the terminal
-            setsebool -P httpd_can_network_connect=1
-            setsebool -P httpd_can_network_connect_db=1
-            setsebool -P httpd_execmem=1
-            setsebool -P httpd_use_nfs 1
- ![alt text](images/15.105.png)
+![alt text](images/15.104.png)
 
-# the next step is to install amazon efs utils for mounting the target on the Elastic file system
-    - copy these steps and paste to the terminals
+### configure selinux policies for the webservers and nginx servers
 
-            git clone https://github.com/aws/efs-utils
-            cd efs-utils
-            yum install -y make
-            yum install -y rpm-build
-            make rpm 
-            yum install -y  ./build/amazon-efs-utils*rpm
- ![alt text](images/15.106.png)
-            ![alt text](images/15.107.png)
-            ![alt text](images/15.108.png)
-            ![alt text](images/15.109.png)
+paste this polices on the terminal
+```
+setsebool -P httpd_can_network_connect=1
+setsebool -P httpd_can_network_connect_db=1
+setsebool -P httpd_execmem=1
+setsebool -P httpd_use_nfs 1
+```
 
-# The next step is seting up self-signed certificate for the nginx instance
-    - Paste the steps into the terminal
-    - when installing the certificate; on the answering prompt put the following answer
-            country : Uk
-            province : London
-            City : London
-            comapny : Olami
-            section : Devops
-            common name: use the private IPv4 DNS address of the Nginx server
-            email: put your email
+![alt text](images/15.105.png)
 
+### the next step is to install amazon efs utils for mounting the target on the Elastic file system
+    
+copy these steps and paste to the terminals
+```
+git clone https://github.com/aws/efs-utils
+cd efs-utils
+yum install -y make
+yum install -y rpm-build
+make rpm 
+yum install -y  ./build/amazon-efs-utils*rpm
+```
+ 
+![alt text](images/15.106.png)
+![alt text](images/15.107.png)
+![alt text](images/15.108.png)
+![alt text](images/15.109.png)
 
-            sudo mkdir /etc/ssl/private
-            sudo chmod 700 /etc/ssl/private
-            openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ACS.key -out /etc/ssl/certs/ACS.crt
-            sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+### The next step is seting up self-signed certificate for the nginx instance
+
+Paste the steps into the terminal
+when installing the certificate; on the answering prompt put the following answer
+    country : Uk
+    province : London
+    City : London
+    comapny : Olami
+    section : Devops
+    common name: use the private IPv4 DNS address of the Nginx server
+    email: put your email
+
+```
+sudo mkdir /etc/ssl/private
+sudo chmod 700 /etc/ssl/private
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ACS.key -out /etc/ssl/certs/ACS.crt
+sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+```
 
 ![alt text](images/15.110.png)
+
 ![alt text](images/15.111.png)
-- To check if the certificate was generated successfully, lets check the parth we save the (certificate and the param)
+
+To check if the certificate was generated successfully, lets check the parth we save the (certificate and the param)
             - ls -l /etc/ssl/certs/
             - the ACS.crt and param are present
             ![alt text](images/15.112.png)
