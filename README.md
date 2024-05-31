@@ -494,21 +494,26 @@ Name : user > assign permission policies > create user group
 ![alt text](images/15.77.png)
 
 ![alt text](images/15.78.png)
-   
-    
-    # To set up RDS we need to create KMS key to be used to encrypt the database instance
-    # The next step is to create a KMS key in the KMS store
-        - go to AWS Key Management service
-        - create a key > Symmetric
-     ![alt text](images/15.72.png)
 
-        - click advance option, leave as default 
-        - name : ACS-rds-key > next
-     ![alt text](images/15.73.png)
+### Create KMS Key
 
-        - key administartor: set myself > finish
-      ![alt text](images/15.79.png)
-         ![alt text](images/15.80.png)
+To set up `RDS` we need to create `KMS key` to be used to `encrypt` the database instance
+The next step is to create a KMS key in the KMS store
+Go to [AWS Key Management service](https://aws.amazon.com/kms/)
+create a key > Symmetric
+
+![alt text](images/15.72.png)
+
+click advance option, leave as default 
+name : ACS-rds-key > next
+
+![alt text](images/15.73.png)
+
+key administartor: set myself > finish
+
+![alt text](images/15.79.png)
+
+![alt text](images/15.80.png)
 
     # The next pre requsite is to create a subnet group
     - go to Amazon RDS service
