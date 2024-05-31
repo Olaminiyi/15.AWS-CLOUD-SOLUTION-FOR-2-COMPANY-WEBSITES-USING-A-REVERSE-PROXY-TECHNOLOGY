@@ -39,10 +39,10 @@ Firstly fork https://github.com/Olaminiyi/ACS-project-config.git into your repo
 
 ### SET UP A VIRTUAL PRIVATE NETWORK (VPC)
 
-Go to AWS console
+**Go to AWS console**
 We are creating 2 `route tables`, the First will talk to the public subnet via `internet gateway` WHILE the SECOND will talk to `private subnet` via the `Natgateway`
 
-Create a new VPC
+**Create a new VPC**
 Name it ACS-VPC
 From the soluton diagram: IPv6 CIDR block : 10.0.0.0/16
 
@@ -96,7 +96,7 @@ The CIDR block: 10.0.0.0/24
  
 ![alt text](images/15.10.png)
 
-Add new subnet
+**Add new subnet**
 ACS-public-subnet-2
 select us-east-1b
 10.0.2.0/24
@@ -104,7 +104,7 @@ Click on create subnet
  
 ![alt text](images/15.11.png)
 
-For the second subnet
+**For the second subnet**
 create the private subnet
 select our pvc
 ACS-private-subnet-1
@@ -113,21 +113,21 @@ us-east-1a
 
 ![alt text](images/15.12.png)
 
-add new subnet
+**Add new subnet**
 ACS-private-subnet-2
 us-east-1b
 10.0.3.0/24
 
 ![alt text](images/15.13.png)
 
-for the third subnet
+**for the third subnet**
 ACS-private-subnet-3
 us-east-1a
 10.0.5.0/24
 
 ![alt text](images/15.14.png)
 
-add new subnet
+**Add new subnet**
 ACS-private-subnet-4
 us-east-1b
 10.0.7.0/24
@@ -249,7 +249,7 @@ give it both HTTPS and HTTP from anywhere 0.0.0.0/0
 
 ![alt text](images/15.35.png)
 
-FOR OUTBOUND RULES
+**FOR OUTBOUND RULES**
 Allow all trafic from 0.0.0.0/0
 for tags you can put ACS-ext-ALB 
 Create security group
@@ -263,7 +263,7 @@ select the ACS-VPC
 
 ![alt text](images/15.37.png)
 
-EDIT THE INBOUND RULES
+**EDIT THE INBOUND RULES**
 we need ssh for our bastion, and only from our computer IP
 open ssh from (sorce = My IP)
 add description
@@ -281,7 +281,7 @@ named (ACS-nginx-reverse-proxy) > select VPC
 
 from the diagram, for the reverse proxy (nginx) is placed directly under the ALB. the source of traffic should only come from the ALB (not from the internet nor our IP)
 
-EDIT INBOUND RULES
+**EDIT INBOUND RULES**
 HTTP from the ALB security group
 HTTPS from the ALB security group
 we need our bastion to have access to our reverse proxy server in case of any issue, we should be able to ssh into our reverse proxy server from our bastion
@@ -291,7 +291,7 @@ SSH from the bastion security group
 
 ![alt text](images/15.42.png)
 
-OUTBOUND RULES is ok for all traffic from 0.0.0.0/0
+**OUTBOUND RULES** is ok for all traffic from 0.0.0.0/0
 Create group
 
 The next security group is for the internal load balancer
@@ -301,7 +301,7 @@ Select the ACS-VPC
  
 ![alt text](images/15.43.png)
 
-EDIT THE INBOUND RULES 
+**EDIT THE INBOUND RULES** 
 NOTE from the diagram, the traffic is coming only from the Nginx server
 Both HTTPS and HTTP from nginx security group
 nothing for the outbound rules 
@@ -309,58 +309,72 @@ create security
 
 ![alt text](images/15.44.png)
         
-        - The next security group we are creating now is for the webservers
-            - the source of its traffic is coming only from the internal ALB
-            - named it ACS-weberver > Descrip(for webserev)
-            - select the ACS-VPC
-    ![alt text](images/15.45.png)
+The next security group we are creating now is for the webservers
+The source of its traffic is coming only from the internal ALB
+Named it ACS-weberver > Descrip(for webserev)
+Select the ACS-VPC
+ 
+ ![alt text](images/15.45.png)
 
-            - EDIT INBOUND RULES
-                - ssh access only via the bastion security group
-                - HTTP and HTTPS from the internal ALB security group
-                - create
-      ![alt text](images/15.46.png)
+**EDIT INBOUND RULES**
+
+ssh access only via the bastion security group
+HTTP and HTTPS from the internal ALB security group
+**Create**
+
+![alt text](images/15.46.png)
         
-        - The next security group we are creating is for the data layer
-        - for the data layer, our webserver needs to be mounts to the Amazon Elastic Filesystem and conneted to the RDS database
-        - Also our bastion needs access to the database
-            - named it ACS-datalayer > Descrip(for datalayer)
-            - select the ACS-VPC
-     ![alt text](images/15.47.png)
+The next security group we are creating is for the data layer
+For the data layer, our webserver needs to be mounts to the Amazon Elastic Filesystem and conneted to the RDS database
+Also our bastion needs access to the database
+Named it ACS-datalayer > Descrip(for datalayer)
+select the ACS-VPC
 
-             - EDIT INBOUND RULES
-                - mysql access only via the baston security group, we need mysql access into the RDS to create database
-                - NFS access through the webserver security group
-                - mysql/aurora access through the webserver security group
-                - create
-      ![alt text](images/15.48.png)
+![alt text](images/15.47.png)
 
-    # After creating all the security groups, the next is to create the certificate, the amazon file system and then the RDS
+**EDIT INBOUND RULES**
+`mysql` access only via the `baston security group`, we need mysql access into the RDS to create `database`.
+`NFS` access through the `webserver security group`
+`mysql/aurora` access through the `webserver security group`
+Create
+     
+![alt text](images/15.48.png)
 
-    - Got a domain name "olami.uk"from 123Reg and transfer it to Route53 on aws
-    ![alt text](images/15.53.png)
+After creating all the security groups, the next is to create the certificate, the amazon file system and then the RDS
 
-    - create a hosted name in the Route 53 with the registered domain name 
-    ![alt text](images/15.54.png)
+Got a domain name `olami.uk`from 123Reg and transfer it to Route53 on aws
 
-    - created hosted zone
-    - put the domain name (olami.uk) > choose public hosted zone
-    ![alt text](images/15.55.png)
-    ![alt text](images/15.97.png)
+![alt text](images/15.53.png)
+
+Create a hosted name in the `Route 53` with the registered domain name 
     
-    - go to the domain name provider and edit the nameservers
-    - Transfer the (4 server address) in the hostname zone in the (NS column) to the domain provider nameservers
-    ![alt text](images/15.56.png)
+![alt text](images/15.54.png)
 
-    # The next step is get a certificate from AWS Certificate Manager
-    # the reason we are creating a certificate first is because when creating ALB we need to select a certificate
-        - click on request a Cert > Request public cert > Next
-    ![alt text](images/15.49.png)
-        ![alt text](images/15.50.png)
-        - in the domain name, we are going to use a wild card i.e(*.)
-        - should in case we want to have another name or subdomain, the WILDCARD will make sure tha any name before the domain name is attached to the certificate. e.g temi.olami.uk
-            - put this for domain name: *.olami.uk
-            -  chose DNS validation > 
+**Created hosted zone**
+Put the domain name (olami.uk) > choose public hosted zone
+ 
+![alt text](images/15.55.png)
+
+![alt text](images/15.97.png)
+    
+Go to the domain name provider and `edit` the `nameservers`
+Transfer the (4 server address) in the hostname zone in the (NS column) to the domain provider nameservers
+
+![alt text](images/15.56.png)
+
+The next step is to get a certificate from **AWS Certificate Manager**
+The reason we are creating a `certificate`first is because when creating `ALB` we need to select a `certificate`
+Click on request a Cert > Request public cert > Next
+ 
+![alt text](images/15.49.png)
+ 
+![alt text](images/15.50.png)
+  
+In the domain name, we are going to use a **wild card i.e(*.)**
+should in case we want to have another `name` or `subdomain`, the `WILDCARD` will make sure that any name before the domain name is attached to the `certificate`. e.g **temi.olami.uk**
+
+put this for domain name: *.olami.uk
+chose DNS validation > 
             ![alt text](images/15.51.png)
 
         - Key Algorithm : RSA 2048
