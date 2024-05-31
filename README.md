@@ -70,60 +70,73 @@ Click on the Internet gateway
 Create, name it ACS-Igw
  
 ![alt text](images/15.6.png)
-        - click on Action > attach to VPC
-        ![alt text](images/15.7.png)
-        - select our own VPC > Attach internet gateway
-        ![alt text](images/15.8.png)
+
+Click on Action > attach to VPC
+   
+![alt text](images/15.7.png)
+  
+Select our own VPC > Attach internet gateway
+     
+![alt text](images/15.8.png)
     
-# The next thing to create is the subnet
-    - to divide ip address check: ipinfo.io/ips
-    - our /16 is under 0/8, were are going to set set even number to public subnet and odd number to private subnet
-    - click on  creat subnet
-    - from the diagram, there are 2 subnet and 2 availablity zones. the load balancer (ALB) needs two zones to function
-    - for this project, we are using AZ  us-eas-t1a and us-east-1b
-        - select our pvc
-  ![alt text](images/15.9.png)
+### The next thing to create is the Subnet
 
-        - named it ACS-public-subnet-1
-        - select us-east-1a
-        - the CIDR block: 10.0.0.0/24
-  ![alt text](images/15.10.png)
+To divide ip address check: ipinfo.io/ips
+Our /16 is under 0/8, were are going to set set even number to public subnet and odd number to private subnet
+Click on  creat subnet
+From the diagram, there are 2 subnet and 2 availablity zones. the load balancer (ALB) needs two zones to function
+For this project, we are using AZ  us-eas-t1a and us-east-1b
+select our pvc
 
-        - add new subnet
-        - ACS-public-subnet-2
-        - select us-east-1b
-        - 10.0.2.0/24
-        -click on create subnet
- ![alt text](images/15.11.png)
+![alt text](images/15.9.png)
 
-        - for the second subnet
-        - create the private subnet
-        - select our pvc
-        - ACS-private-subnet-1
-        - us-east-1a
-        - 10.0.1.0/24
- ![alt text](images/15.12.png)
+Named it ACS-public-subnet-1
+select us-east-1a
+The CIDR block: 10.0.0.0/24
+ 
+![alt text](images/15.10.png)
 
-        - add new subnet
-        - ACS-private-subnet-2
-        - us-east-1b
-        - 10.0.3.0/24
- ![alt text](images/15.13.png)
+Add new subnet
+ACS-public-subnet-2
+select us-east-1b
+10.0.2.0/24
+Click on create subnet
+ 
+![alt text](images/15.11.png)
 
-        for the third subnet
-        - ACS-private-subnet-3
-        - us-east-1a
-        - 10.0.5.0/24
- ![alt text](images/15.14.png)
+For the second subnet
+create the private subnet
+select our pvc
+ACS-private-subnet-1
+us-east-1a
+10.0.1.0/24
 
-        - add new subnet
-        - ACS-private-subnet-4
-        - us-east-1b
-        - 10.0.7.0/24
- ![alt text](images/15.15.png)
+![alt text](images/15.12.png)
 
-- all created subnets
-    ![alt text](images/15.19.png)
+add new subnet
+ACS-private-subnet-2
+us-east-1b
+10.0.3.0/24
+
+![alt text](images/15.13.png)
+
+for the third subnet
+ACS-private-subnet-3
+us-east-1a
+10.0.5.0/24
+
+![alt text](images/15.14.png)
+
+add new subnet
+ACS-private-subnet-4
+us-east-1b
+10.0.7.0/24
+
+![alt text](images/15.15.png)
+
+All created subnets
+ 
+![alt text](images/15.19.png)
 
 # Next is to create the route Table
 - were creating 2 route table
