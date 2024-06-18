@@ -403,7 +403,7 @@ Certificate will be attched to ALB
 
 ![alt text](images/15.62.png)
 
-We want to add mount target to our filesystem which simply means specifying the subnet. Any resources in the subnet we specify will be able to mount on the file system. From the diagram we can se that the webservers that want to ount on the file system and in `private subnet 1 & 2`.
+We want to add mount target to our filesystem which simply means specifying the subnet. Any resources in the subnet we specify will be able to mount on the file system. From the diagram we can se that the webservers that want to mount on the file system and in `private subnet 1 & 2`.
 
 If we mistakenly put file system in `private subnet 3 & 4`that means our webserver will not be able to mount on the file system because we have not created `mount target` in their subnet
 
@@ -570,7 +570,6 @@ A target group must be attached to a load balancer. we create a target group fir
 we are creating 3 AMI's for (bastion, Nginx and webservers)
 - spin up 3 RedHat EC2 instances for (bastion, Nginx and webservers)
 
-![alt text](images/15.93.png)
 
 The first installation is for the Bastion AMI
 - connect to the `bastion server` via `ssh`
@@ -766,7 +765,7 @@ yum install -y  ./build/amazon-efs-utils*rpm
  
 ![alt text](images/15.122.png)
         
-**seting up self-signed certificate for the apache webserver instance**
+**setting up self-signed certificate for the apache webserver instance**
 ```
 yum install -y mod_ssl
 ```
@@ -832,7 +831,7 @@ Go to your instances on the AWS console. **For webserver:**
 The next step is to create the Target while the AMI are still pending
 >[!NOTE] 
 > Note we are not creating a target group for the bastion; from our diagram, the bastion is not placed behind the load balancer. 
->we are only creating target group for the instances behind laod balancer which are (Nginx, weservers(tooling & wordpress))
+>we are only creating target group for the instances behind laod balancer which are (Nginx, weservers(tooling & wordpress)
             
 Click on Target Groups > create target group
 
